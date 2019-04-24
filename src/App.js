@@ -123,13 +123,11 @@ class App extends Component {
 render() {
   return (
 
-
-
     <ThemeProvider theme={theme}>
       <ChatBot steps={steps} />
     </ThemeProvider>
    )
   }
-}
+} 
 
 export default App;
