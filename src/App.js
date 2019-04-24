@@ -1,96 +1,135 @@
-  import React, { Component } from 'react';
-  import './App.css';
-  import ToDo from './components/ToDo.js';
+import React, { Component } from 'react';
+import ChatBot from 'react-simple-chatbot';
+import Calendar from './components/calendar';
+import Email from './components/email';
+import Linkedin from './components/linkedin';
+import { ThemeProvider } from 'styled-components';
+import './App.css';
 
-  class App extends Component {
+const theme = {
+  background: '#f5f8fb',
+  fontFamily: 'Arial',
+  headerBgColor: '#3466a7',
+  headerFontColor: '#fff',
+  headerFontSize: '15px',
+  botBubbleColor: '#ffffff',
+  botFontColor: '#000',
+  userBubbleColor: '#fff',
+  userFontColor: '#4a4a4a',
+};
+
+const steps = [
+ {
+   id: '1',
+   message: 'Nice to meet you! I\'m Buddie, Federico\'s personal assistant.',
+   trigger: '3',
+   hideInput: true,
+ },
+ {
+ id: '3',
+ message: 'How may I help you?',
+ hideInput: true,
+ trigger : '4'
+ },
+ {
+   id: '4',
+   hideInput: true,
+   options: [
+     { value: 3, label: 'Connect me with Federico', trigger: '7' }, //some driver tree
+     { value: 1, label: 'Schedule a call', trigger: '5' }, //calendly
+     { value: 4, label: 'None of the above', trigger: '13' }, //send an email
+   ],
+ },
+ {
+ id: '5',
+ hideInput: true,
+ message: 'Federico manages his agenda through Calendly. Click here to view his availabilities and propose a slot to meet',
+ trigger: '5.1'
+ },
+ {
+     id: '5.1',
+     component: <Calendar />,
+     asMessage: true,
+     end: true
+ },
+ {
+ id: '7',
+ hideInput: true,
+ message: 'Why would you like to connect with Federico?',
+ trigger: 9,
+ },
+ {
+   id: '9',
+   hideInput: true,
+   options: [
+     { value: 3, label: 'I\'d like to discuss an opportunity', trigger: '12' }, //some driver tree
+     { value: 1, label: 'I am passionate about tech startups', trigger: '10' }, //send email
+     { value: 2, label: 'I\'d like to learn more about Bain', trigger: '11' }, //send email
+     { value: 4, label: 'None of the above', trigger: '13' }, //send an email
+   ],
+ },
+ {
+ id: '10',
+ message: 'Federico loves tech startups like you. Feel free to connect with him on Linkedin and send him an email, especially if your topic is related to any of the following: digital product management, customer experience, digital strategy, machine learning',
+ trigger: '10.1'
+ },
+ {
+     id: '10.1',
+     component: <Email />,
+     asMessage: true,
+     end: true
+ },
+ {
+ id: '11',
+ message: 'Federico is happy to help committed candidates. You can reach him at his personal email, making a quick intro about you and why you are considering to work in consulting.',
+ trigger: '11.1'
+ },
+ {
+     id: '11.1',
+     component: <Email />,
+     asMessage: true,
+     end: true
+ },
+ {
+ id: '12',
+ message: 'Sure! Feel free to reach Federico through his Linkedin profile.',
+ trigger: '12.1'
+ },
+ {
+     id: '12.1',
+     component: <Linkedin />,
+     asMessage: true,
+     end: true
+ },
+ {
+ id: '13',
+ message: 'I am sorry but I cannot be of any help. Please identify yourself.',
+ trigger: 14
+ },
+ {
+     id: '14',
+     component: <Linkedin />,
+     asMessage: true,
+     end: true
+ },
+
+];
+
+class App extends Component {
     constructor(props) {
-      super(props);
-      this.state = {
-        todos: [
-          { description: 'Walk the cat', isCompleted: true, isDeleted: false },
-          { description: 'Throw the dishes away', isCompleted: false, isDeleted: false },
-          { description: 'Buy new dishes', isCompleted: false, isDeleted: false }
-        ],
-          newTodoDescription: '' //standard approach to using values from text inputs is to store the value in state.
-      };
+      super(props)
     }
-    // We need handleChange () to accept the e variable (short for "event"), and then set the state of  newToDoDescription to e.target.value. e.target is the target element, the text input.
-    handleChange(e) {
-       this.setState({ newTodoDescription: e.target.value })
-     }
 
-    handleSubmit(e) { // create the handleSubmit method on the App component
-       e.preventDefault(); // Call e.preventDefault() to prevent the default page reload on form submit,
-       if (!this.state.newTodoDescription) { return }
-       // 1st pass
-       // console.log('handleSubmit called'); //add a console.log() with an arbitrary value to test the event listener.
+render() {
+  return (
 
-       // 2nd pass
-       // On submit, we want a new to-do item to be added to this.state.todos
-       // We'll create a new todo object and use this.setState() to add it to this.state.todos
-       // To ensure that we don't directly mutate state, we'll use the JavaScript spread syntax to pass setState a new array, with our new todo object added to the end of it.
-       const newTodo = { description: this.state.newTodoDescription, isCompleted: false };
-       this.setState({ todos: [...this.state.todos, newTodo], newTodoDescription: '' });
-     }
 
-    // 1st pass
-    // toggleComplete() { //create the event handler as a class method on the App component
-    // console.log('toggleComplete executed');
-    // }
 
-    // 2nd pass
-    //  the anonymous function will be passed to ToDo. It will be up to the  ToDo component to call the anonymous function, through  this.props.toggleComplete which will be called from the onChange listener.
-    // toggleComplete(index) {
-    // console.log(index)
-    // }
-
-    // 3rd pass
-    toggleComplete(index) {
-      const todos = this.state.todos.slice();
-      const todo = todos[index];
-      todo.isCompleted = todo.isCompleted ? false : true;
-      this.setState({ todos: todos });
-    }
-    deleteTodo(index) {
-      this.setState(prevState => {
-      const todos = prevState.todos.filter((todo, i) => i !== index);
-      return { todos };
-  });
+    <ThemeProvider theme={theme}>
+      <ChatBot steps={steps} />
+    </ThemeProvider>
+   )
+  }
 }
 
-    render() {
-      return (
-        <div className="App">
-          <ul>
-          {/*// When you don’t have stable IDs for rendered items, you may use the item index as a key as a last resort
-          // https://reactjs.org/docs/lists-and-keys.html */}
-          { this.state.todos.map((todo, index) => //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map#Mapping_an_array_of_numbers_to_an_array_of_square_roots
-            //pass this function to our ToDo component as a prop.
-            //<ToDo key={ index } description={ todo.description } isCompleted={ todo.isCompleted } toggleComplete={ this.toggleComplete } />
-
-            // same as above + To update the 'App' component's state, it will be necessary to know which 'ToDo' item is selected. Instead of passing the 'toggleComplete' function directly to 'ToDo', we can wrap it
-            //in an anonymous function. This allows us to pass the function the todo's 'index' from the 'map' function. We'll then use the 'index' to modify the appropriate 'ToDo'.
-           <ToDo key={ index } description={ todo.description } isCompleted={ todo.isCompleted } toggleComplete={ () => this.toggleComplete(index)} isDeleted = {todo.isDeleted}  deleteTodo={ () => this.deleteTodo(index)} />
-            )}
-          </ul>
-          {/*
-          //make the app to respond to form submissions.
-          */}
-          <form onSubmit={ (e) => this.handleSubmit(e) }>
-
-          {/*
-            // 1st pass - The value of the input is bound to this.state.newTodoDescription, so to change the value in the UI, we need to change the value in state.
-            // <input type="text" value={ this.state.newTodoDescription } />          // set the value of the text into to this.state.newTodoDescription.
-
-            // 2nd pass - The value of the input is bound to this.state.newTodoDescription, so to change the value in the UI, we need to change the value in state.
-            // To do that, add an onChange event listener to the text input. The value of onChange should be an arrow function that accepts e as a parameter and then calls this.handleChange, passing it the e parameter.
-          */}
-          <input type="text" value={ this.state.newTodoDescription } onChange={ (e) => this.handleChange(e) } />
-          <input type="submit" />
-         </form>
-        </div>
-      );
-    }
-  }
-
-  export default App;
+export default App;

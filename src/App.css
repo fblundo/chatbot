@@ -7,6 +7,11 @@
   height: 40vmin;
 }
 
+  .rsc-os-options {
+      margin: 2px 0 12px 0;
+      padding: 0px 0px 0px 16%;
+  }
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -21,6 +26,8 @@
 .App-link {
   color: #61dafb;
 }
+
+
 
 @keyframes App-logo-spin {
   from {
