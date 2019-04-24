@@ -128,6 +128,5 @@ render() {
     </ThemeProvider>
    )
   }
-} 
-
+}
 export default App;
